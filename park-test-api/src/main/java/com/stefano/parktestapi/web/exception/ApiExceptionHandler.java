@@ -1,13 +1,14 @@
 package com.stefano.parktestapi.web.exception;
 
+import com.stefano.parktestapi.exception.CpfUniqueViolationException;
 import com.stefano.parktestapi.exception.EntityNotFoundException;
-import com.stefano.parktestapi.exception.PasswordInvalidException;
 import com.stefano.parktestapi.exception.UsernameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,13 +18,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
-    @ExceptionHandler(PasswordInvalidException.class)
-    public ResponseEntity<ErrorMessage> passwordInvalidException(RuntimeException ex, HttpServletRequest request) {
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorMessage> accessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
         log.error("Api error - ", ex);
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.FORBIDDEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -35,7 +36,7 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
-    @ExceptionHandler(UsernameUniqueViolationException.class)
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex, HttpServletRequest request) {
         log.error("Api error - ", ex);
         return ResponseEntity

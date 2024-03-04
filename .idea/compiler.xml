@@ -10,9 +10,6 @@
         <module name="park-test-api" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="park-test-api" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
