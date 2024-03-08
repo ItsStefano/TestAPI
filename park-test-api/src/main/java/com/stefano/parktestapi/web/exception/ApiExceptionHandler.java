@@ -1,8 +1,6 @@
 package com.stefano.parktestapi.web.exception;
 
-import com.stefano.parktestapi.exception.CpfUniqueViolationException;
-import com.stefano.parktestapi.exception.EntityNotFoundException;
-import com.stefano.parktestapi.exception.UsernameUniqueViolationException;
+import com.stefano.parktestapi.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,6 +25,15 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
     }
 
+    @ExceptionHandler(PasswordInvalidException.class)
+    public ResponseEntity<ErrorMessage> passwordInvalidException(RuntimeException ex, HttpServletRequest request) {
+        log.error("Api Error - ", ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorMessage> entityNotFoundException(RuntimeException ex, HttpServletRequest request) {
         log.error("Api error - ", ex);
@@ -36,7 +43,7 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
-    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class, CodigoUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex, HttpServletRequest request) {
         log.error("Api error - ", ex);
         return ResponseEntity
